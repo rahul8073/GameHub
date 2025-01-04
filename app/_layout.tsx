@@ -34,6 +34,7 @@ export default function RootLayout() {
         <Stack.Screen name="Snake" options={{title:"Snake"}}/>
         <Stack.Screen name="sudoku" options={{title:"Sudoku"}} />
         <Stack.Screen name="TicTacToe" options={{title:"TicTacToe"}} />
+        <Stack.Screen name="ludo" options={{title:"Ludo"}} />
       </Stack>
       <StatusBar backgroundColor='#fff' />
     </>
