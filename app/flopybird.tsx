@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Audio } from 'expo-av';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window')
 const bird_Size = wp('15%')
 const obstacle_width = wp('10%')
@@ -14,6 +15,7 @@ export default function FlopyBird() {
     const [obstacleHight, setObstacleHeight] = useState(20);
     const [gameOver, setGameover] = useState(false);
     const [score, setScore] = useState(0)
+    const [highestScore, setHighestScore] = useState(0);
     let birdtime;
     let obstackleTime;
     const backgroundAnim = useRef(new Animated.Value(0)).current;
@@ -59,7 +61,40 @@ export default function FlopyBird() {
         };
     }, []);
 
+    useEffect(() => {
+        const loadHighestScore = async () => {
+            try {
+                const storedHighestScore = await AsyncStorage.getItem('highestScore');
+                if (storedHighestScore !== null) {
+                    setHighestScore(parseInt(storedHighestScore, 10));
+                }
+            } catch (error) {
+                console.error('Failed to load the highest score:', error);
+            }
+        };
 
+        loadHighestScore();
+    }, []);
+
+    // Update highest score when score changes
+    useEffect(() => {
+        const updateHighestScore = async () => {
+            try {
+                if (score >= highestScore) {
+                    setHighestScore(score);
+                    await AsyncStorage.setItem('highestScore', score.toString());
+                }
+            } catch (error) {
+                console.error('Failed to update the highest score:', error);
+            }
+        };
+
+        if (!gameOver) {
+            updateHighestScore();
+        }
+    }, [score]);
+
+ 
     useEffect(() => {
         const { bgMusic, gameOverSound } = soundRef.current;
         if (gameOverSound) {
@@ -102,6 +137,7 @@ export default function FlopyBird() {
 
         }
     }, [gameOver])
+    
 
     useEffect(() => {
         if (!gameOver) {
@@ -212,6 +248,7 @@ export default function FlopyBird() {
                 />
 
 
+                <Text style={styles.highestScore}>highestScore: {highestScore}</Text>
                 <Text style={styles.score}>Score: {score}</Text>
 
 
@@ -237,11 +274,18 @@ const styles = StyleSheet.create({
     },
     score: {
         position: 'absolute',
-        top: 50,
+        top: hp('5%'),
         alignSelf: 'center',
-        fontSize: 32,
+        fontSize: wp('9%'),
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#green',
+    },
+    highestScore: {
+        position: 'absolute',
+        top: hp('2%'),
+        alignSelf: 'center',
+        fontSize: wp('6%'),
+        color: '#000',
     },
     background: {
         position: 'absolute',
