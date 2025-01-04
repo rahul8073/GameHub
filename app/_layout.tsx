@@ -17,11 +17,11 @@ export default function RootLayout() {
   return (
     <>
       <Stack>
-        <Stack.Screen name="index" options={{headerShown:false}} />
-        <Stack.Screen name="flopybird" />
-        <Stack.Screen name="Snake" />
-        <Stack.Screen name="sudoku" />
-        <Stack.Screen name="TicTacToe" />
+        <Stack.Screen name="index" options={{headerShown:false,}} />
+        <Stack.Screen name="flopybird" options={{title:"Flopy Bird"}} />
+        <Stack.Screen name="Snake" options={{title:"Snake"}}/>
+        <Stack.Screen name="sudoku" options={{title:"Sudoku"}} />
+        <Stack.Screen name="TicTacToe" options={{title:"TicTacToe"}} />
       </Stack>
       <StatusBar style="auto" />
     </>

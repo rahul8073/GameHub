@@ -41,6 +41,16 @@ export default function HomeScreen() {
           <Text style={styles.cardTitle}>Sudoku</Text>
           <Text style={styles.cardDescription}>Challenge your brain!</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => router.push('flopybird')}>
+          <Image
+            source={require('../assets/flopybird/bird.png')} // Replace with your TicTacToe game image
+            style={styles.cardImage}
+          />
+          <Text style={styles.cardTitle}>Flopy Bird</Text>
+          <Text style={styles.cardDescription}>Enjoy Flopy!</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
