@@ -6,13 +6,25 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
 
+  useEffect(() => {
+     async function prepare() {
+       try {
+         // Prevent the splash screen from auto-hiding
+         await SplashScreen.preventAutoHideAsync();
+         // Simulate a delay (for demonstration)
+         await new Promise(resolve => setTimeout(resolve, 2000));
+       } catch (e) {
+         console.warn(e);
+       } finally {
+         // Hide the splash screen after initialization
+         await SplashScreen.hideAsync();
+       }
+     }
  
+     prepare();
+   }, []);
 
   return (
     <>
@@ -23,7 +35,7 @@ export default function RootLayout() {
         <Stack.Screen name="sudoku" options={{title:"Sudoku"}} />
         <Stack.Screen name="TicTacToe" options={{title:"TicTacToe"}} />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar backgroundColor='#fff' />
     </>
 
   );

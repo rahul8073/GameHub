@@ -1,8 +1,10 @@
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
-
+import * as SplashScreen from 'expo-splash-screen';
 export default function HomeScreen() {
+ 
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Game Hub</Text>
@@ -59,7 +61,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#000',
     paddingHorizontal: 15,
   },
   header: {
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 20,
-    color: '#333',
+    color: '#fff',
   },
   cardContainer: {
     flexDirection: 'row',

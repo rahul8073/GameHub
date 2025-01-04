@@ -6,14 +6,14 @@ import { Audio } from 'expo-av';
 const { width, height } = Dimensions.get('window')
 const bird_Size = wp('15%')
 const obstacle_width = wp('10%')
-const obstacle_gaps = hp('20%')
+const obstacle_gaps = hp('30%')
 const gravity = 6
 export default function FlopyBird() {
-    const [birdBottom, setBirdBottom] = useState(height / 2)
+    const [birdBottom, setBirdBottom] = useState(height/2)
     const [obstacleLeft, setObstacleLeft] = useState(width)
-    const [obstacleHight, setObstacleHeight] = useState(0);
+    const [obstacleHight, setObstacleHeight] = useState(20);
     const [gameOver, setGameover] = useState(false);
-    const [score,setScore]=useState(0)
+    const [score, setScore] = useState(0)
     let birdtime;
     let obstackleTime;
     const backgroundAnim = useRef(new Animated.Value(0)).current;
@@ -27,18 +27,18 @@ export default function FlopyBird() {
                     require('../assets/flopybird/birdbgsound.mp3'),
                     { shouldPlay: false, isLooping: true, volume: 0.5 }
                 );
-                
+
                 // Load game over sound
                 const gameOverSound = await Audio.Sound.createAsync(
                     require('../assets/snakeAudio/gameover.mp3')
                 );
-    
+
                 // Save sound instances in the ref
                 soundRef.current = {
                     bgMusic: bgMusic.sound, // Correctly assign the sound object
                     gameOverSound: gameOverSound.sound,
                 };
-    
+
                 // Start background music if the game is not over
                 if (!gameOver) {
                     soundRef.current.bgMusic.playAsync();
@@ -47,37 +47,37 @@ export default function FlopyBird() {
                 console.error('Error loading sounds:', error);
             }
         };
-    
+
         loadSound();
-    
+
         return () => {
             const { bgMusic, gameOverSound } = soundRef.current;
-    
+
             // Unload sounds to free resources
             if (bgMusic) bgMusic.unloadAsync();
             if (gameOverSound) gameOverSound.unloadAsync();
         };
     }, []);
-    
 
-        useEffect(() => {
-            const { bgMusic,gameOverSound } = soundRef.current;
-            if (gameOverSound){ 
-                if(gameOver){ 
-                    gameOverSound.replayAsync();
-                }
+
+    useEffect(() => {
+        const { bgMusic, gameOverSound } = soundRef.current;
+        if (gameOverSound) {
+            if (gameOver) {
+                gameOverSound.replayAsync();
             }
-    
-            if (bgMusic) {
-                if (gameOver) {
-                    bgMusic.stopAsync(); // Stop the background music on game over
-                } else {
-                    bgMusic.setPositionAsync(0); // Reset position
-                    bgMusic.playAsync(); // Play the background music when game restarts
-                }
+        }
+
+        if (bgMusic) {
+            if (gameOver) {
+                bgMusic.stopAsync(); // Stop the background music on game over
+            } else {
+                bgMusic.setPositionAsync(0); // Reset position
+                bgMusic.playAsync(); // Play the background music when game restarts
             }
-        }, [gameOver]);
-    
+        }
+    }, [gameOver]);
+
     // useEffect(() => {
     //     if (!gameOver) {
     //       Animated.loop(
@@ -94,7 +94,7 @@ export default function FlopyBird() {
 
     useEffect(() => {
         if (!gameOver) {
-        
+
             birdtime = setInterval(() => {
                 setBirdBottom(prev => Math.max(prev - gravity, 0))
             }, 30);
@@ -107,12 +107,17 @@ export default function FlopyBird() {
         if (!gameOver) {
             obstackleTime = setInterval(() => {
                 setObstacleLeft(prev => (prev > -(obstacle_gaps) ? Math.max(prev - 5) : width))
-                
+
                 if (obstacleLeft <= -obstacle_gaps) {
                     setObstacleHeight(Math.random() * (height - obstacle_gaps))
                     setScore((score) => score + 1);
                 }
             }, 10);
+       
+            if (obstacleLeft <= 0 && obstacleLeft>= -5 ) {
+                setScore((score) => score + 1);
+            }
+
 
             return () => clearInterval(obstackleTime)
 
@@ -121,44 +126,45 @@ export default function FlopyBird() {
     }, [obstacleLeft, gameOver])
 
     useEffect(() => {
-        // console.log( score);
-
+    //    console.log(obstacleHight ,obstacle_gaps,birdBottom);
+       
         if (
             birdBottom <= 0 || birdBottom >= (height - bird_Size) ||
             // bottom obstacle collison
-            (birdBottom < obstacleHight &&
-                 obstacleLeft < (bird_Size + obstacle_width) &&
-                 obstacleLeft>bird_Size
+            (birdBottom <= obstacleHight &&
+                obstacleLeft < (bird_Size + obstacle_width) &&
+                obstacleLeft+obstacle_width > bird_Size
 
-                ) ||
+            ) ||
             // top obstacle collison
-            (birdBottom > obstacleHight + obstacle_gaps &&
-                 obstacleLeft < (bird_Size + obstacle_width - obstacle_gaps) &&
-                 obstacleLeft>bird_Size-obstacle_gaps
+            (birdBottom >= obstacleHight+obstacle_gaps &&
+                obstacleLeft < (bird_Size + obstacle_width - obstacle_gaps) &&
+                obstacleLeft+obstacle_width > bird_Size - obstacle_gaps
 
-                )
+            )
         ) {
             setGameover(true);
             clearInterval(birdtime);
             clearInterval(obstackleTime);
         }
+        
     }, [birdBottom, obstacleHight, obstacleLeft]);
 
     const jump = () => {
         if (!gameOver)
-            setBirdBottom((prev) => Math.max(prev + 90,0))
+            setBirdBottom((prev) => Math.max(prev + 90, 0))
     }
     const restartGame = () => {
         setGameover(false);
-        setBirdBottom(height / 2)
-        setObstacleHeight(0);
+        setBirdBottom(height/2)
+        setObstacleHeight(20);
         setObstacleLeft(width)
         setScore(0)
     }
     return (
         <TouchableWithoutFeedback onPress={jump}>
             <View style={styles.container}>
-            
+
                 <Animated.Image
                     source={require('../assets/flopybird/cloudbg.jpg')}
                     style={[
@@ -181,7 +187,7 @@ export default function FlopyBird() {
                 />
 
                 <LinearGradient
-                  colors={['#EF1212', '#C9491A', '#4EC2B4']}
+                    colors={['#EF1212', '#C9491A', '#4EC2B4']}
                     style={[
                         styles.obstacle,
                         {
@@ -193,20 +199,20 @@ export default function FlopyBird() {
 
                 />
                 <LinearGradient
-        // Background Linear Gradient
-        colors={['#4EC2B4', '#C9491A', '#EF1212']}
-        style={[
-            styles.obstacle,
-            {
-                height: height - obstacleHight - obstacle_gaps,
-                left: obstacleLeft + obstacle_gaps,
-                top: 0
-            }
-        ]}
-      />
-               
+                    // Background Linear Gradient
+                    colors={['#4EC2B4', '#C9491A', '#EF1212']}
+                    style={[
+                        styles.obstacle,
+                        {
+                            height: height-obstacleHight-obstacle_gaps-bird_Size,
+                            left: obstacleLeft + obstacle_gaps,
+                            top: 0
+                        }
+                    ]}
+                />
 
-               <Text style={styles.score}>Score: {score}</Text>
+
+                <Text style={styles.score}>Score: {score}</Text>
 
 
                 {gameOver && (
@@ -236,10 +242,10 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: 'bold',
         color: '#fff',
-      },
+    },
     background: {
         position: 'absolute',
-        width: width*2, // Double the width for seamless scrolling
+        width: width * 2, // Double the width for seamless scrolling
         height: hp('130%'),
         resizeMode: 'cover',
     },
