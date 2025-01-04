@@ -6,7 +6,7 @@ import { Audio } from 'expo-av';
 const { width, height } = Dimensions.get('window')
 const bird_Size = wp('15%')
 const obstacle_width = wp('10%')
-const obstacle_gaps = hp('30%')
+const obstacle_gaps = hp('25%')
 const gravity = 6
 export default function FlopyBird() {
     const [birdBottom, setBirdBottom] = useState(height/2)
